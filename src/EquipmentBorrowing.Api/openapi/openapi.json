@@ -1,0 +1,1415 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Campus Equipment Borrowing API",
+    "version": "1.0.0",
+    "description": "ITSD 81 Laboratory Activity 5. JSON over HTTP, UTF-8, /api/v1 prefix. Dates are YYYY-MM-DD in the server's local calendar. Unknown routes return 404 and wrong methods 405, both with the standard error body. A 500 is a received server response; an unreachable API produces no HTTP status at all."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5080"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Equipment"
+    },
+    {
+      "name": "Students"
+    },
+    {
+      "name": "Borrowings"
+    }
+  ],
+  "paths": {
+    "/api/v1/equipment": {
+      "get": {
+        "operationId": "listEquipment",
+        "summary": "API-01: List equipment (optionally only available)",
+        "tags": [
+          "Equipment"
+        ],
+        "x-api-id": "API-01",
+        "x-use-cases": "UC-01, UC-02",
+        "x-tests": "T01, T07",
+        "x-business-rules": "BR-05..07, 10",
+        "parameters": [
+          {
+            "name": "available",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "true = only available items; false = only unavailable"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of equipment ([] if none)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Equipment"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid syntax, missing/blank field, unknown field, or invalid date/query value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createEquipment",
+        "summary": "API-08: Register equipment (starts available)",
+        "tags": [
+          "Equipment"
+        ],
+        "x-api-id": "API-08",
+        "x-use-cases": "UC-15",
+        "x-tests": "T03, T07",
+        "x-business-rules": "BR-05, 06, 16",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EquipmentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Equipment"
+                }
+              }
+            },
+            "headers": {
+              "Location": {
+                "description": "URL of the created resource",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid syntax, missing/blank field, unknown field, or invalid date/query value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Business-rule conflict or duplicate identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students": {
+      "get": {
+        "operationId": "listStudents",
+        "summary": "API-02: List students; optional search by name or number",
+        "tags": [
+          "Students"
+        ],
+        "x-api-id": "API-02",
+        "x-use-cases": "UC-03, 06, 07, 13, 14",
+        "x-tests": "T01, T02, T07",
+        "x-business-rules": "BR-01..03",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "description": "Trimmed, case-insensitive partial match on name or student number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of students",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Student"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid syntax, missing/blank field, unknown field, or invalid date/query value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createStudent",
+        "summary": "API-04: Register a student (starts eligible)",
+        "tags": [
+          "Students"
+        ],
+        "x-api-id": "API-04",
+        "x-use-cases": "UC-12",
+        "x-tests": "T02, T07",
+        "x-business-rules": "BR-01, 02, 16",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student"
+                }
+              }
+            },
+            "headers": {
+              "Location": {
+                "description": "URL of the created resource",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid syntax, missing/blank field, unknown field, or invalid date/query value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Business-rule conflict or duplicate identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{id}": {
+      "get": {
+        "operationId": "getStudent",
+        "summary": "API-03: Get one student",
+        "tags": [
+          "Students"
+        ],
+        "x-api-id": "API-03",
+        "x-use-cases": "UC-07, 13, 14",
+        "x-tests": "T01, T02, T07",
+        "x-business-rules": "BR-01..03",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The student",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateStudent",
+        "summary": "API-05: Replace editable student fields",
+        "tags": [
+          "Students"
+        ],
+        "x-api-id": "API-05",
+        "x-use-cases": "UC-13",
+        "x-tests": "T02, T07",
+        "x-business-rules": "BR-01..03, 14",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated student",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid syntax, missing/blank field, unknown field, or invalid date/query value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Business-rule conflict or duplicate identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{id}/eligibility": {
+      "patch": {
+        "operationId": "setEligibility",
+        "summary": "API-06: Set eligibility (same value = no-op 200)",
+        "tags": [
+          "Students"
+        ],
+        "x-api-id": "API-06",
+        "x-use-cases": "UC-14",
+        "x-tests": "T02, T07",
+        "x-business-rules": "BR-04, 08",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EligibilityInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Student",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid syntax, missing/blank field, unknown field, or invalid date/query value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/equipment/{id}": {
+      "get": {
+        "operationId": "getEquipment",
+        "summary": "API-07: Get one equipment item",
+        "tags": [
+          "Equipment"
+        ],
+        "x-api-id": "API-07",
+        "x-use-cases": "UC-08, 16",
+        "x-tests": "T01, T03, T07",
+        "x-business-rules": "BR-05..07",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Equipment"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateEquipment",
+        "summary": "API-09: Replace editable equipment fields (isAvailable is protected)",
+        "tags": [
+          "Equipment"
+        ],
+        "x-api-id": "API-09",
+        "x-use-cases": "UC-16",
+        "x-tests": "T03, T07",
+        "x-business-rules": "BR-05..07, 14",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EquipmentInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Equipment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid syntax, missing/blank field, unknown field, or invalid date/query value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Business-rule conflict or duplicate identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrowings": {
+      "post": {
+        "operationId": "createBorrowing",
+        "summary": "API-10: Issue one item to a student",
+        "tags": [
+          "Borrowings"
+        ],
+        "x-api-id": "API-10",
+        "x-use-cases": "UC-03",
+        "x-tests": "T04, T05, T07",
+        "x-business-rules": "BR-08..11, 14..16",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BorrowingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Borrowing"
+                }
+              }
+            },
+            "headers": {
+              "Location": {
+                "description": "URL of the created resource",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid syntax, missing/blank field, unknown field, or invalid date/query value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Business-rule conflict or duplicate identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "listBorrowings",
+        "summary": "API-14: Search / filter / sort borrowings",
+        "tags": [
+          "Borrowings"
+        ],
+        "x-api-id": "API-14",
+        "x-use-cases": "UC-04, 09",
+        "x-tests": "T01, T06, T07",
+        "x-business-rules": "BR-14, 17",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "description": "Trimmed, case-insensitive partial match over student name, student number or equipment name"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Active",
+                "Returned",
+                "All"
+              ],
+              "default": "All"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "borrowedDate",
+                "expectedReturnDate"
+              ],
+              "default": "borrowedDate"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching ordered array ([] if none)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Borrowing"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid syntax, missing/blank field, unknown field, or invalid date/query value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/checkout-requests": {
+      "post": {
+        "operationId": "checkout",
+        "summary": "API-11: Atomic multi-item checkout (2+ items)",
+        "tags": [
+          "Borrowings"
+        ],
+        "x-api-id": "API-11",
+        "x-use-cases": "UC-06",
+        "x-tests": "T05, T07",
+        "x-business-rules": "BR-08..12, 15, 16",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "One borrowing per item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResult"
+                }
+              }
+            },
+            "headers": {
+              "Location": {
+                "description": "URL of the created resource",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid syntax, missing/blank field, unknown field, or invalid date/query value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Business-rule conflict or duplicate identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrowings/{id}/return": {
+      "post": {
+        "operationId": "returnBorrowing",
+        "summary": "API-12: Return a borrowed item",
+        "tags": [
+          "Borrowings"
+        ],
+        "x-api-id": "API-12",
+        "x-use-cases": "UC-05",
+        "x-tests": "T04, T07",
+        "x-business-rules": "BR-10, 13, 14",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmptyObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returned borrowing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Borrowing"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Business-rule conflict or duplicate identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/borrowings/{id}": {
+      "get": {
+        "operationId": "getBorrowing",
+        "summary": "API-13: Get one borrowing",
+        "tags": [
+          "Borrowings"
+        ],
+        "x-api-id": "API-13",
+        "x-use-cases": "UC-03, 05",
+        "x-tests": "T01, T04, T07",
+        "x-business-rules": "BR-14",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The borrowing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Borrowing"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{id}/borrowings": {
+      "get": {
+        "operationId": "listStudentBorrowings",
+        "summary": "API-15: A student's full history (active + returned)",
+        "tags": [
+          "Students"
+        ],
+        "x-api-id": "API-15",
+        "x-use-cases": "UC-07",
+        "x-tests": "T01, T06, T07",
+        "x-business-rules": "BR-14, 19",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Borrowing"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/equipment/{id}/borrowings": {
+      "get": {
+        "operationId": "listEquipmentBorrowings",
+        "summary": "API-16: An item's full history (active + returned)",
+        "tags": [
+          "Equipment"
+        ],
+        "x-api-id": "API-16",
+        "x-use-cases": "UC-08",
+        "x-tests": "T01, T06, T07",
+        "x-business-rules": "BR-14, 19",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Borrowing"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown specific ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server/database failure. Safe body, no credentials or stack trace. Codes: server_error, database_unavailable, database_error, commit_outcome_unknown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Student": {
+        "type": "object",
+        "required": [
+          "id",
+          "studentNumber",
+          "fullName",
+          "isEligible"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "studentNumber": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "contact": {
+            "type": "string",
+            "nullable": true
+          },
+          "isEligible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Equipment": {
+        "type": "object",
+        "required": [
+          "id",
+          "equipmentCode",
+          "name",
+          "isAvailable"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "equipmentCode": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "isAvailable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Borrowing": {
+        "type": "object",
+        "required": [
+          "id",
+          "studentId",
+          "equipmentId",
+          "borrowedDate",
+          "expectedReturnDate",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "studentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "equipmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "borrowedDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "expectedReturnDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "returnedDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Active",
+              "Returned"
+            ]
+          },
+          "studentNumber": {
+            "type": "string"
+          },
+          "studentName": {
+            "type": "string"
+          },
+          "equipmentCode": {
+            "type": "string"
+          },
+          "equipmentName": {
+            "type": "string"
+          }
+        }
+      },
+      "StudentInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "studentNumber",
+          "fullName"
+        ],
+        "properties": {
+          "studentNumber": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "fullName": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "contact": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 150,
+            "description": "Omitted on create = absent. On update, null/omitted clears it."
+          }
+        }
+      },
+      "EligibilityInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "isEligible"
+        ],
+        "properties": {
+          "isEligible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "EquipmentInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "equipmentCode",
+          "name"
+        ],
+        "properties": {
+          "equipmentCode": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 150
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 500,
+            "description": "isAvailable / id / status are protected: sending them is a 400."
+          }
+        }
+      },
+      "BorrowingInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "studentId",
+          "equipmentId",
+          "expectedReturnDate"
+        ],
+        "properties": {
+          "studentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "equipmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedReturnDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Must be later than the server's local date."
+          }
+        }
+      },
+      "CheckoutInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "studentId",
+          "equipmentIds",
+          "expectedReturnDate"
+        ],
+        "properties": {
+          "studentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "equipmentIds": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "expectedReturnDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "CheckoutResult": {
+        "type": "object",
+        "required": [
+          "borrowings"
+        ],
+        "properties": {
+          "borrowings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Borrowing"
+            }
+          }
+        }
+      },
+      "EmptyObject": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

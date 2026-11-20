@@ -1,0 +1,72 @@
+### VS Code "REST Client" / JetBrains HTTP client file. Run requests one at a time.
+@base = http://localhost:5080
+@studentId = PASTE-A-STUDENT-ID
+@equipmentId = PASTE-AN-EQUIPMENT-ID
+@borrowingId = PASTE-A-BORROWING-ID
+
+### API-01 list equipment / only available
+GET {{base}}/api/v1/equipment
+###
+GET {{base}}/api/v1/equipment?available=true
+### API-02 students (search optional)
+GET {{base}}/api/v1/students?search=ada
+### API-03
+GET {{base}}/api/v1/students/{{studentId}}
+### API-04
+POST {{base}}/api/v1/students
+Content-Type: application/json
+
+{ "studentNumber": "ST-500", "fullName": "Eli Tan", "contact": null }
+### API-05
+PUT {{base}}/api/v1/students/{{studentId}}
+Content-Type: application/json
+
+{ "studentNumber": "ST-500", "fullName": "Eli Tan Jr.", "contact": "eli@example.test" }
+### API-06
+PATCH {{base}}/api/v1/students/{{studentId}}/eligibility
+Content-Type: application/json
+
+{ "isEligible": false }
+### API-07
+GET {{base}}/api/v1/equipment/{{equipmentId}}
+### API-08
+POST {{base}}/api/v1/equipment
+Content-Type: application/json
+
+{ "equipmentCode": "EQ-008", "name": "Charger", "description": null }
+### API-09
+PUT {{base}}/api/v1/equipment/{{equipmentId}}
+Content-Type: application/json
+
+{ "equipmentCode": "EQ-008", "name": "Fast charger", "description": "65W" }
+### API-10 single issue
+POST {{base}}/api/v1/borrowings
+Content-Type: application/json
+
+{ "studentId": "{{studentId}}", "equipmentId": "{{equipmentId}}", "expectedReturnDate": "2026-11-12" }
+### API-11 atomic multi-item checkout
+POST {{base}}/api/v1/checkout-requests
+Content-Type: application/json
+
+{ "studentId": "{{studentId}}", "equipmentIds": ["PASTE-ID-1", "PASTE-ID-2"], "expectedReturnDate": "2026-11-12" }
+### API-12 return
+POST {{base}}/api/v1/borrowings/{{borrowingId}}/return
+Content-Type: application/json
+
+{}
+### API-13
+GET {{base}}/api/v1/borrowings/{{borrowingId}}
+### API-14
+GET {{base}}/api/v1/borrowings?search=cruz&status=Active&sort=expectedReturnDate&direction=desc
+### API-15
+GET {{base}}/api/v1/students/{{studentId}}/borrowings
+### API-16
+GET {{base}}/api/v1/equipment/{{equipmentId}}/borrowings
+### OpenAPI
+GET {{base}}/openapi/v1.json
+### Health (does not touch the database)
+GET {{base}}/health
+### Dev helpers (only with Dev__Enabled=true)
+POST {{base}}/dev/reset
+###
+POST {{base}}/dev/fault?armed=true

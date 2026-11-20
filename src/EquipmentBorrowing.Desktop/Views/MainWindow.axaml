@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="using:EquipmentBorrowing.Desktop.Views"
+        x:Class="EquipmentBorrowing.Desktop.Views.MainWindow"
+        Title="Campus Equipment Borrowing — Lab 5 (HTTP client)"
+        Width="1180" Height="780" MinWidth="960" MinHeight="620">
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Background="#EEF2F7" Padding="12,8">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock VerticalAlignment="Center" Text="{Binding ApiBaseUrl, StringFormat='API: {0}'}" />
+        <Button Grid.Column="1" Content="Reload all data"
+                Command="{Binding ReloadAllCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+      </Grid>
+    </Border>
+
+    <StackPanel DockPanel.Dock="Top">
+      <ProgressBar IsIndeterminate="True" Height="4" IsVisible="{Binding Status.IsBusy}" />
+      <Border Padding="12,4" IsVisible="{Binding Status.IsBusy}">
+        <TextBlock Text="{Binding Status.BusyText}" FontStyle="Italic" />
+      </Border>
+      <Border Background="#FDE7E9" Padding="12,8" IsVisible="{Binding Status.HasError}">
+        <TextBlock Text="{Binding Status.Error}" TextWrapping="Wrap" Foreground="#8A1C1C" />
+      </Border>
+      <Border Background="#E6F4EA" Padding="12,8" IsVisible="{Binding Status.HasInfo}">
+        <TextBlock Text="{Binding Status.Info}" TextWrapping="Wrap" Foreground="#1E5E2E" />
+      </Border>
+    </StackPanel>
+
+    <TabControl Margin="6">
+      <TabItem Header="Borrowings">
+        <v:BorrowingsView DataContext="{Binding Borrowings}" />
+      </TabItem>
+      <TabItem Header="Check out">
+        <v:CheckoutView DataContext="{Binding Checkout}" />
+      </TabItem>
+      <TabItem Header="Students">
+        <v:StudentsView DataContext="{Binding Students}" />
+      </TabItem>
+      <TabItem Header="Equipment">
+        <v:EquipmentView DataContext="{Binding Equipment}" />
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</Window>

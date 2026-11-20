@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="EquipmentBorrowing.Desktop.Views.CheckoutView">
+  <Grid ColumnDefinitions="*,*" Margin="10">
+    <StackPanel Spacing="10" Margin="0,0,16,0">
+      <TextBlock FontWeight="Bold" Text="1. Choose a student" />
+      <ComboBox ItemsSource="{Binding Students}" SelectedItem="{Binding SelectedStudent}" HorizontalAlignment="Stretch">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{Binding StudentNumber}" FontWeight="SemiBold" />
+              <TextBlock Text="{Binding FullName}" />
+              <TextBlock Text="(restricted)" Foreground="#B00020" IsVisible="{Binding !IsEligible}" />
+            </StackPanel>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+
+      <TextBlock FontWeight="Bold" Text="2. Expected return date (YYYY-MM-DD, must be after today)" />
+      <TextBox Width="180" HorizontalAlignment="Left" Text="{Binding ExpectedReturnDate}" />
+
+      <Button Content="Check out ticked items" HorizontalAlignment="Left"
+              Command="{Binding SubmitCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+      <Button Content="Reload students and equipment" HorizontalAlignment="Left"
+              Command="{Binding RefreshCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+      <TextBlock TextWrapping="Wrap" Foreground="#555"
+                 Text="One item is sent as a single borrowing. Two or more are sent as ONE atomic checkout request: either every item is issued or none is. The server re-checks eligibility, availability and the borrowing limit." />
+    </StackPanel>
+
+    <DockPanel Grid.Column="1">
+      <TextBlock DockPanel.Dock="Top" FontWeight="Bold" Margin="0,0,0,6" Text="3. Tick the available equipment" />
+      <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding Equipment}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Label}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </DockPanel>
+  </Grid>
+</UserControl>

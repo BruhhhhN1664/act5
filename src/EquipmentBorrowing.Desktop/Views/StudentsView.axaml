@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="EquipmentBorrowing.Desktop.Views.StudentsView">
+  <Grid ColumnDefinitions="2*,*" Margin="6">
+    <Grid RowDefinitions="Auto,*,Auto,*" Margin="0,0,12,0">
+      <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+        <TextBox Width="260" Watermark="Search name or student number" Text="{Binding Search}">
+          <TextBox.KeyBindings>
+            <KeyBinding Gesture="Enter" Command="{Binding RefreshCommand}" />
+          </TextBox.KeyBindings>
+        </TextBox>
+        <Button Content="Search / reload" Command="{Binding RefreshCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+      </StackPanel>
+
+      <DataGrid Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding Selected, Mode=TwoWay}"
+                AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="All">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Student no." Binding="{Binding StudentNumber}" />
+          <DataGridTextColumn Header="Full name" Binding="{Binding FullName}" Width="*" />
+          <DataGridTextColumn Header="Contact" Binding="{Binding Contact}" Width="*" />
+          <DataGridCheckBoxColumn Header="Eligible" Binding="{Binding IsEligible}" />
+        </DataGrid.Columns>
+      </DataGrid>
+
+      <TextBlock Grid.Row="2" Margin="0,10,0,4" FontWeight="Bold" Text="{Binding HistoryTitle}" />
+      <DataGrid Grid.Row="3" ItemsSource="{Binding History}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="All">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Equip. code" Binding="{Binding EquipmentCode}" />
+          <DataGridTextColumn Header="Equipment" Binding="{Binding EquipmentName}" Width="*" />
+          <DataGridTextColumn Header="Borrowed" Binding="{Binding BorrowedDate, StringFormat='{}{0:yyyy-MM-dd}'}" />
+          <DataGridTextColumn Header="Expected" Binding="{Binding ExpectedReturnDate, StringFormat='{}{0:yyyy-MM-dd}'}" />
+          <DataGridTextColumn Header="Returned" Binding="{Binding ReturnedDate, StringFormat='{}{0:yyyy-MM-dd}'}" />
+          <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+
+    <StackPanel Grid.Column="1" Spacing="8">
+      <TextBlock FontWeight="Bold" Text="Student details" />
+      <TextBlock Text="Student number" />
+      <TextBox Text="{Binding Number}" />
+      <TextBlock Text="Full name" />
+      <TextBox Text="{Binding FullName}" />
+      <TextBlock Text="Contact (optional)" />
+      <TextBox Text="{Binding Contact}" />
+      <WrapPanel>
+        <Button Margin="0,0,8,8" Content="Register new student" Command="{Binding AddCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+        <Button Margin="0,0,8,8" Content="Save changes to selected" Command="{Binding SaveCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+        <Button Margin="0,0,8,8" Content="Clear form" Command="{Binding ClearFormCommand}" />
+        <Button Margin="0,0,8,8" Content="Toggle eligibility" Command="{Binding ToggleEligibilityCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+        <Button Margin="0,0,8,8" Content="Show history" Command="{Binding ShowHistoryCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+      </WrapPanel>
+    </StackPanel>
+  </Grid>
+</UserControl>

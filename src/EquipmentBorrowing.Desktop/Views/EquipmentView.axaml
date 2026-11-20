@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="EquipmentBorrowing.Desktop.Views.EquipmentView">
+  <Grid ColumnDefinitions="2*,*" Margin="6">
+    <Grid RowDefinitions="Auto,*,Auto,*" Margin="0,0,12,0">
+      <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,8">
+        <CheckBox Content="Available only" IsChecked="{Binding AvailableOnly}" />
+        <Button Content="Reload" Command="{Binding RefreshCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+      </StackPanel>
+
+      <DataGrid Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding Selected, Mode=TwoWay}"
+                AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="All">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Code" Binding="{Binding EquipmentCode}" />
+          <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+          <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
+          <DataGridCheckBoxColumn Header="Available" Binding="{Binding IsAvailable}" />
+        </DataGrid.Columns>
+      </DataGrid>
+
+      <TextBlock Grid.Row="2" Margin="0,10,0,4" FontWeight="Bold" Text="{Binding HistoryTitle}" />
+      <DataGrid Grid.Row="3" ItemsSource="{Binding History}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="All">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Student no." Binding="{Binding StudentNumber}" />
+          <DataGridTextColumn Header="Student" Binding="{Binding StudentName}" Width="*" />
+          <DataGridTextColumn Header="Borrowed" Binding="{Binding BorrowedDate, StringFormat='{}{0:yyyy-MM-dd}'}" />
+          <DataGridTextColumn Header="Expected" Binding="{Binding ExpectedReturnDate, StringFormat='{}{0:yyyy-MM-dd}'}" />
+          <DataGridTextColumn Header="Returned" Binding="{Binding ReturnedDate, StringFormat='{}{0:yyyy-MM-dd}'}" />
+          <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+
+    <StackPanel Grid.Column="1" Spacing="8">
+      <TextBlock FontWeight="Bold" Text="Equipment details" />
+      <TextBlock Text="Equipment code" />
+      <TextBox Text="{Binding Code}" />
+      <TextBlock Text="Name" />
+      <TextBox Text="{Binding Name}" />
+      <TextBlock Text="Description (optional)" />
+      <TextBox Text="{Binding Description}" AcceptsReturn="True" Height="80" TextWrapping="Wrap" />
+      <TextBlock TextWrapping="Wrap" Foreground="#555"
+                 Text="Availability is controlled only by issuing and returning; it cannot be edited here." />
+      <WrapPanel>
+        <Button Margin="0,0,8,8" Content="Register new equipment" Command="{Binding AddCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+        <Button Margin="0,0,8,8" Content="Save changes to selected" Command="{Binding SaveCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+        <Button Margin="0,0,8,8" Content="Clear form" Command="{Binding ClearFormCommand}" />
+        <Button Margin="0,0,8,8" Content="Show history" Command="{Binding ShowHistoryCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+      </WrapPanel>
+    </StackPanel>
+  </Grid>
+</UserControl>

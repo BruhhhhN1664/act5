@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="EquipmentBorrowing.Desktop.Views.BorrowingsView">
+  <DockPanel Margin="6">
+    <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+      <TextBox Width="260" Margin="0,0,8,4" Watermark="Search student, number or equipment" Text="{Binding Search}">
+        <TextBox.KeyBindings>
+          <KeyBinding Gesture="Enter" Command="{Binding RefreshCommand}" />
+        </TextBox.KeyBindings>
+      </TextBox>
+      <ComboBox Width="120" Margin="0,0,8,4" ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding SelectedStatus}" />
+      <ComboBox Width="180" Margin="0,0,8,4" ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSort}" />
+      <ComboBox Width="90" Margin="0,0,8,4" ItemsSource="{Binding DirectionOptions}" SelectedItem="{Binding SelectedDirection}" />
+      <Button Content="Apply" Margin="0,0,8,4" Command="{Binding RefreshCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+      <Button Content="Show active only" Margin="0,0,8,4" Command="{Binding ShowActiveCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+      <Button Content="Reset filters" Margin="0,0,8,4" Command="{Binding ResetFiltersCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+      <Button Content="Return selected" Margin="0,0,8,4" Command="{Binding ReturnCommand}" IsEnabled="{Binding !Status.IsBusy}" />
+    </WrapPanel>
+    <TextBlock DockPanel.Dock="Bottom" Margin="0,6,0,0" Text="{Binding Summary}" />
+    <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected, Mode=TwoWay}"
+              AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="All" CanUserSortColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Student no." Binding="{Binding StudentNumber}" />
+        <DataGridTextColumn Header="Student" Binding="{Binding StudentName}" Width="*" />
+        <DataGridTextColumn Header="Equip. code" Binding="{Binding EquipmentCode}" />
+        <DataGridTextColumn Header="Equipment" Binding="{Binding EquipmentName}" Width="*" />
+        <DataGridTextColumn Header="Borrowed" Binding="{Binding BorrowedDate, StringFormat='{}{0:yyyy-MM-dd}'}" />
+        <DataGridTextColumn Header="Expected return" Binding="{Binding ExpectedReturnDate, StringFormat='{}{0:yyyy-MM-dd}'}" />
+        <DataGridTextColumn Header="Returned" Binding="{Binding ReturnedDate, StringFormat='{}{0:yyyy-MM-dd}'}" />
+        <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </DockPanel>
+</UserControl>
