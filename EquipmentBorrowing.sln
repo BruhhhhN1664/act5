@@ -1,0 +1,57 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipmentBorrowing.Contracts", "src\EquipmentBorrowing.Contracts\EquipmentBorrowing.Contracts.csproj", "{6DF1050A-B5E1-505B-A68B-A0664E41BF71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipmentBorrowing.Domain", "src\EquipmentBorrowing.Domain\EquipmentBorrowing.Domain.csproj", "{73E1371E-911A-5C29-82F4-8BE960C08287}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipmentBorrowing.Application", "src\EquipmentBorrowing.Application\EquipmentBorrowing.Application.csproj", "{BE15DD9A-C38F-5E5B-9F74-720426F0EE89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipmentBorrowing.Infrastructure", "src\EquipmentBorrowing.Infrastructure\EquipmentBorrowing.Infrastructure.csproj", "{5E04BB57-4412-5E37-B2C2-79721809C0C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipmentBorrowing.Api", "src\EquipmentBorrowing.Api\EquipmentBorrowing.Api.csproj", "{52B6AEDA-20BA-57C8-9E18-4D74509EDC73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipmentBorrowing.Desktop", "src\EquipmentBorrowing.Desktop\EquipmentBorrowing.Desktop.csproj", "{80E64736-332C-5FC1-AD8C-A9140B01A2A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipmentBorrowing.AcceptanceRunner", "tools\EquipmentBorrowing.AcceptanceRunner\EquipmentBorrowing.AcceptanceRunner.csproj", "{3933108D-04C3-5A4F-9816-2D49997F358E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6DF1050A-B5E1-505B-A68B-A0664E41BF71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DF1050A-B5E1-505B-A68B-A0664E41BF71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DF1050A-B5E1-505B-A68B-A0664E41BF71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DF1050A-B5E1-505B-A68B-A0664E41BF71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73E1371E-911A-5C29-82F4-8BE960C08287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73E1371E-911A-5C29-82F4-8BE960C08287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73E1371E-911A-5C29-82F4-8BE960C08287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73E1371E-911A-5C29-82F4-8BE960C08287}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE15DD9A-C38F-5E5B-9F74-720426F0EE89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE15DD9A-C38F-5E5B-9F74-720426F0EE89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE15DD9A-C38F-5E5B-9F74-720426F0EE89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE15DD9A-C38F-5E5B-9F74-720426F0EE89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E04BB57-4412-5E37-B2C2-79721809C0C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E04BB57-4412-5E37-B2C2-79721809C0C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E04BB57-4412-5E37-B2C2-79721809C0C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E04BB57-4412-5E37-B2C2-79721809C0C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52B6AEDA-20BA-57C8-9E18-4D74509EDC73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52B6AEDA-20BA-57C8-9E18-4D74509EDC73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52B6AEDA-20BA-57C8-9E18-4D74509EDC73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52B6AEDA-20BA-57C8-9E18-4D74509EDC73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80E64736-332C-5FC1-AD8C-A9140B01A2A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80E64736-332C-5FC1-AD8C-A9140B01A2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80E64736-332C-5FC1-AD8C-A9140B01A2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80E64736-332C-5FC1-AD8C-A9140B01A2A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3933108D-04C3-5A4F-9816-2D49997F358E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3933108D-04C3-5A4F-9816-2D49997F358E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3933108D-04C3-5A4F-9816-2D49997F358E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3933108D-04C3-5A4F-9816-2D49997F358E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
